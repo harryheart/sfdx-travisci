@@ -17,25 +17,31 @@ before_install:
 - export PATH=./sfdx/$(pwd):$PATH
 - sfdx --version
 - sfdx plugins --core
+
 jobs:
   include:
-  - stage: unit-test
+  if: branch =~ ^feature.* 
+  - staget: test
     script:
-    - sfdx force:auth:jwt:grant --clientid $CONSUMERKEY --jwtkeyfile assets/server.key
-      --username $USERNAME --setdefaultdevhubusername -a HubOrg
-    - sfdx force:org:create -v HubOrg -s -f config/project-scratch-def.json -a ciorg
-      --wait 2
-    - sfdx force:org:display -u ciorg
-    - sfdx force:source:push -u ciorg
-    - sfdx force:apex:test:run -u ciorg --wait 10
-    - sfdx force:org:delete -u ciorg -p
-  - stage: deploy
-    script:
-    - sfdx force:auth:jwt:grant --clientid $devkey --jwtkeyfile assets/server.key
-      --username $devun -a DevOrg
-    - mkdir mdapioutput
-    - sfdx force:source:convert -d mdapioutput/
-    - sfdx force:mdapi:deploy -d mdapioutput/ -u DevOrg -w 100
-    - sfdx force:org:display -u DevOrg
-    - sfdx force:apex:test:run -u DevOrg --wait 10
-    - sfdx force:auth:logout -u DevOrg -p
+      - sfdx force:auth:jwt:grant --clientid $CONSUMERKEY --jwtkeyfile assets/server.key
+        --username $USERNAME --setdefaultdevhubusername -a HubOrg
+      - sfdx force:org:create -v HubOrg -s -f config/project-scratch-def.json -a ciorg
+        --wait 2
+      - sfdx force:org:display -u ciorg
+      - sfdx force:source:push -u ciorg
+      - sfdx force:apex:test:run -u ciorg --wait 10
+      - sfdx force:org:delete -u ciorg -p
+
+jobs:
+  include:
+    if: branch = master
+    - stage: deploy
+      script:
+      - sfdx force:auth:jwt:grant --clientid $devkey --jwtkeyfile assets/server.key
+        --username $devun -a DevOrg
+      - mkdir mdapioutput
+      - sfdx force:source:convert -d mdapioutput/
+      - sfdx force:mdapi:deploy -d mdapioutput/ -u DevOrg -w 100
+      - sfdx force:org:display -u DevOrg
+      - sfdx force:apex:test:run -u DevOrg --wait 10
+      - sfdx force:auth:logout -u DevOrg -p
