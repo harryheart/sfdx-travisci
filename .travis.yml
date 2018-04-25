@@ -34,14 +34,15 @@ before_install:
 
 jobs:
   include:
-    - stage: deploy
-      if: branch=master
-        script:
-        - sfdx force:auth:jwt:grant --clientid $devkey --jwtkeyfile assets/server.key
-          --username $devun -a DevOrg
-        - mkdir mdapioutput
-        - sfdx force:source:convert -d mdapioutput/
-        - sfdx force:mdapi:deploy -d mdapioutput/ -u DevOrg -w 100
-        - sfdx force:org:display -u DevOrg
-        - sfdx force:apex:test:run -u DevOrg --wait 10
-        - sfdx force:auth:logout -u DevOrg -p
+    - stage: 
+      - name: deploy
+        if: branch=master
+          script:
+          - sfdx force:auth:jwt:grant --clientid $devkey --jwtkeyfile assets/server.key
+            --username $devun -a DevOrg
+          - mkdir mdapioutput
+          - sfdx force:source:convert -d mdapioutput/
+          - sfdx force:mdapi:deploy -d mdapioutput/ -u DevOrg -w 100
+          - sfdx force:org:display -u DevOrg
+          - sfdx force:apex:test:run -u DevOrg --wait 10
+          - sfdx force:auth:logout -u DevOrg -p
