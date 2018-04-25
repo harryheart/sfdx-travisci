@@ -34,7 +34,7 @@ before_install:
 
 jobs:
   include:
-    if: branch=master
+    # if: branch=master
     - stage: deploy
       script:
       - sfdx force:auth:jwt:grant --clientid $devkey --jwtkeyfile assets/server.key
