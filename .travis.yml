@@ -31,8 +31,8 @@ jobs:
     - sfdx force:org:delete -u ciorg -p
   - stage: deploy
     script:
-    - sfdx force:auth:jwt:grant --clientid $dev-key --jwtkeyfile assets/server.key
-      --username $dev-un -a DevOrg
+    - sfdx force:auth:jwt:grant --clientid $devkey --jwtkeyfile assets/server.key
+      --username $devun -a DevOrg
     - sfdx force:org:display -u DevOrg
     - sfdx force:source:push -u DevOrg
     - sfdx force:apex:test:run -u DevOrg --wait 10
