@@ -21,7 +21,7 @@ before_install:
 jobs:
   include:
     if: branch =~ ^feature.* 
-    - stages: 
+    stages: 
       - name: test
       - script:
         - sfdx force:auth:jwt:grant --clientid $CONSUMERKEY --jwtkeyfile assets/server.key
@@ -35,7 +35,7 @@ jobs:
 jobs:
   include:
     if: branch=master
-    - stages: 
+    stages: 
       - name: deploy
       - script:
         - sfdx force:auth:jwt:grant --clientid $devkey --jwtkeyfile assets/server.key
