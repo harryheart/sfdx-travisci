@@ -20,7 +20,7 @@ before_install:
 
 jobs:
   include:
-    if: branch =~ ^feature.* 
+    # if: branch =~ ^feature.* 
     stages: 
       - name: test
       - script:
