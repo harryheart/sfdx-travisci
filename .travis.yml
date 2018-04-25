@@ -17,27 +17,23 @@ before_install:
 - export PATH=./sfdx/$(pwd):$PATH
 - sfdx --version
 - sfdx plugins --core
-
 jobs:
   include:
   - stage: unit-test
     script:
-    - sfdx force:auth:jwt:grant --clientid $CONSUMERKEY --jwtkeyfile assets/server.key --username $USERNAME --setdefaultdevhubusername -a HubOrg
-    - sfdx force:org:create -v HubOrg -s -f config/project-scratch-def.json -a ciorg --wait
-      2
+    - sfdx force:auth:jwt:grant --clientid $CONSUMERKEY --jwtkeyfile assets/server.key
+      --username $USERNAME --setdefaultdevhubusername -a HubOrg
+    - sfdx force:org:create -v HubOrg -s -f config/project-scratch-def.json -a ciorg
+      --wait 2
     - sfdx force:org:display -u ciorg
     - sfdx force:source:push -u ciorg
     - sfdx force:apex:test:run -u ciorg --wait 10
     - sfdx force:org:delete -u ciorg -p
   - stage: deploy
     script:
-    - sfdx force:auth:jwt:grant --clientid $dev-key --jwtkeyfile assets/server.key --username $dev-un -a DevOrg
+    - sfdx force:auth:jwt:grant --clientid $dev-key --jwtkeyfile assets/server.key
+      --username $dev-un -a DevOrg
     - sfdx force:org:display -u DevOrg
     - sfdx force:source:push -u DevOrg
     - sfdx force:apex:test:run -u DevOrg --wait 10
     - sfdx force:auth:logout -u DevOrg
-
-# branches:
-  # only:
-  # - master
-
